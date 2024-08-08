@@ -19,9 +19,10 @@ interface Action {
 interface ActionMenuProps {
   actions: Action[];
   children: ReactNode;
+  onClick?: (action: Action) => void;
 }
 
-const ActionMenu: FC<ActionMenuProps> = ({ actions, children }) => {
+const ActionMenu: FC<ActionMenuProps> = ({ actions, children, onClick }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -31,6 +32,11 @@ const ActionMenu: FC<ActionMenuProps> = ({ actions, children }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClick = (action: Action) => {
+    onClick && onClick(action);
+    handleClose();
   };
 
   return (
@@ -49,7 +55,10 @@ const ActionMenu: FC<ActionMenuProps> = ({ actions, children }) => {
               <Paper>
                 <MenuList>
                   {actions.map((action) => (
-                    <MenuItem key={action.name} onClick={handleClose}>
+                    <MenuItem
+                      key={action.name}
+                      onClick={() => handleClick(action)}
+                    >
                       <ListItemIcon sx={{ color: action.color, minWidth: 32 }}>
                         {action.icon}
                       </ListItemIcon>

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Box, Drawer, List, styled, Typography } from "@mui/material";
 import NavItem from "./NavItem";
-import { Assignment, Home, Source } from "@mui/icons-material";
+import { Assignment, Source } from "@mui/icons-material";
 
 const RootStyle = styled(Drawer)({
   "& .logo": {
@@ -45,12 +45,6 @@ const Sidebar: FC<SidebarProps> = ({ isOpenSidebar, onCloseSidebar }) => {
         </Typography>
       </LogoStyle>
       <List disablePadding sx={{ p: 1 }}>
-        <NavItem
-          title="Home"
-          path="/home"
-          icon={<Home></Home>}
-          onClick={() => onCloseSidebar()}
-        ></NavItem>
         <NavItem
           title="Sources"
           path="/sources"

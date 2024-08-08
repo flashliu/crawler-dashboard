@@ -3,6 +3,8 @@ import { CssBaseline, StyledEngineProvider } from "@mui/material";
 import Router from "./routes";
 import theme from "./theme";
 import "./utils/axios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -11,6 +13,7 @@ function App() {
         <CssBaseline />
         <Router />
       </ThemeProvider>
+      <ToastContainer></ToastContainer>
     </StyledEngineProvider>
   );
 }

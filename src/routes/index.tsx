@@ -1,8 +1,8 @@
 import { Navigate, useRoutes } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
-import Home from "../pages/Home";
-import Tasks from "../pages/Tasks";
-import Sources from "../pages/Sources";
+import Tasks from "../pages/tasks/index";
+import Sources from "../pages/sources/index";
+import Listings from "../pages/sources/listings";
 
 export default function Router() {
   return useRoutes([
@@ -10,12 +10,12 @@ export default function Router() {
       path: "/",
       element: <BaseLayout />,
       children: [
-        { path: "/", element: <Navigate to="/home" /> },
-        { path: "home", element: <Home /> },
+        { path: "/", element: <Navigate to="/sources" /> },
         { path: "sources", element: <Sources /> },
+        { path: "sources/listings/:source_id", element: <Listings /> },
         { path: "tasks", element: <Tasks /> },
       ],
     },
-    { path: "*", element: <Navigate to="/404" replace /> },
+    { path: "*", element: <Navigate to="/sources" replace /> },
   ]);
 }
