@@ -1,17 +1,11 @@
-import { Box,  Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import StyledDataGrid from "../../components/StyledDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 
 import { getTasks, Source } from "../../api/crawler";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
-
-const colors: Record<string, string> = {
-  running: "#1db954",
-  pending: "#1db954",
-  complete: "#ff6b6b",
-  fail: "#ff6b6b",
-};
+import Bridge from "../../components/Bridge";
 
 const Index = () => {
   const timer = useRef<any>();
@@ -20,21 +14,21 @@ const Index = () => {
   const [pageSize, setPageSize] = useState(50);
   const [count, setCount] = useState(0);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (timer.current) {
+      clearInterval(timer.current);
+    }
+
+    timer.current = setInterval(() => {
+      getData(page, pageSize);
+    }, 5000);
+
+    return () => {
       if (timer.current) {
         clearInterval(timer.current);
       }
-
-      timer.current = setInterval(() => {
-        getData(page, pageSize);
-      }, 5000);
-
-      return () => {
-        if (timer.current) {
-          clearInterval(timer.current);
-        }
-      };
-    }, []);
+    };
+  }, []);
 
   useUpdateEffect(() => {
     // TODO: fetch data
@@ -79,14 +73,9 @@ const Index = () => {
         width: 130,
         renderCell: (params) => {
           return (
-            <span
-              style={{
-                color: colors[params.value],
-                cursor: "pointer",
-              }}
-            >
-              {params.value}
-            </span>
+            <Bridge type={params.row.status}>
+              {params.row.status}
+            </Bridge>
           );
         },
       },

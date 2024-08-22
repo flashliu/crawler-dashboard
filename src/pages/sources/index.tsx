@@ -22,6 +22,7 @@ import useUpdateEffect from "../../hooks/useUpdateEffect";
 import EditSource, { EditSourceHandle } from "./components/EditSource";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Bridge from "../../components/Bridge";
 
 const colors: Record<string, string> = {
   running: "#1db954",
@@ -40,21 +41,21 @@ const Index = () => {
   const [pageSize, setPageSize] = useState(50);
   const [count, setCount] = useState(0);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (timer.current) {
+      clearInterval(timer.current);
+    }
+
+    timer.current = setInterval(() => {
+      getData(page, pageSize);
+    }, 5000);
+
+    return () => {
       if (timer.current) {
         clearInterval(timer.current);
       }
-
-      timer.current = setInterval(() => {
-        getData(page, pageSize);
-      }, 5000);
-
-      return () => {
-        if (timer.current) {
-          clearInterval(timer.current);
-        }
-      };
-    }, []);
+    };
+  }, []);
 
   useUpdateEffect(() => {
     // TODO: fetch data
@@ -125,26 +126,16 @@ const Index = () => {
           if (params.row.task.status === "fail") {
             return (
               <Tooltip title={params.row.task.error}>
-                <span
-                  style={{
-                    color: colors[params.row.task.status],
-                    cursor: "pointer",
-                  }}
-                >
+                <Bridge type={params.row.task?.status}>
                   {params.row.task?.status}
-                </span>
+                </Bridge>
               </Tooltip>
             );
           }
           return (
-            <span
-              style={{
-                color: colors[params.row.task.status],
-                cursor: "pointer",
-              }}
-            >
+            <Bridge type={params.row.task?.status}>
               {params.row.task?.status}
-            </span>
+            </Bridge>
           );
         },
       },
