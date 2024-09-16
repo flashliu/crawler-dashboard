@@ -75,6 +75,15 @@ export const sourceScrap = async (source_id: number) => {
   );
 };
 
+export const sourceScrapMulti = async (source_ids: number[]) => {
+  return await axios.post<{ task: Task }>(
+    "/admin/rolexcpo_api/source_scrap_multi.json",
+    {
+      source_ids,
+    }
+  );
+};
+
 export const getTasks = async (page: number, pageSize: number) => {
   return await axios.get<{ list: Source[]; count: number }>(
     "/admin/rolexcpo_api/tasks.json",

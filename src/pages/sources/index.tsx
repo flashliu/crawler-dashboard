@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import StyledDataGrid from "../../components/StyledDataGrid";
-import { GridColDef } from "@mui/x-data-grid";
+import { GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import {
   Add,
   Delete,
@@ -16,6 +16,7 @@ import {
   Source,
   sourceDelete,
   sourceScrap,
+  sourceScrapMulti,
 } from "../../api/crawler";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
@@ -35,6 +36,7 @@ const Index = () => {
   let navigate = useNavigate();
 
   const EditSourceRef = useRef<EditSourceHandle>(null);
+  const apiRef = useGridApiRef();
   const timer = useRef<any>();
   const [rows, setRows] = useState<Source[]>([]);
   const [page, setPage] = useState(1);
@@ -93,6 +95,31 @@ const Index = () => {
     sourceScrap(source.id).then(() => {
       getData(page, pageSize);
     });
+  };
+
+  const handleScrapMulti = async () => {
+    const selectedRows = apiRef.current.getSelectedRows();
+    const ids: number[] = [];
+
+    selectedRows.forEach((v) => {
+      ids.push(v.id);
+    });
+
+    const selectedSources = rows.filter((source) => ids.includes(source.id));
+
+    for (let i = 0; i < selectedSources.length; i++) {
+      const source = selectedSources[i];
+      if (source.task) {
+        if (["pending", "running"].includes(source.task.status)) {
+          toast.error(`Task for source ${source.id} is already in progress`);
+          return;
+        }
+      }
+    }
+
+    await sourceScrapMulti(ids);
+    apiRef.current.setRowSelectionModel([]);
+    getData(page, pageSize);
   };
 
   const handleView = (source: Source) => {
@@ -199,6 +226,17 @@ const Index = () => {
     <>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h5">Sources</Typography>
+        <Box sx={{ flexGrow: 1 }} />
+        <Button
+          variant="contained"
+          color="info"
+          disableElevation
+          startIcon={<PlayCircle fontSize="small" />}
+          onClick={handleScrapMulti}
+        >
+          Scrap
+        </Button>
+        <Box sx={{ width: 10 }} />
         <Button
           variant="contained"
           disableElevation
@@ -210,6 +248,7 @@ const Index = () => {
       </Box>
       <StyledDataGrid
         checkboxSelection
+        apiRef={apiRef}
         disableRowSelectionOnClick
         autoHeight
         columns={columns}
