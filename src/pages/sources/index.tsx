@@ -25,13 +25,6 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Bridge from "../../components/Bridge";
 
-const colors: Record<string, string> = {
-  running: "#1db954",
-  pending: "#1db954",
-  complete: "green",
-  fail: "#ff6b6b",
-};
-
 const Index = () => {
   let navigate = useNavigate();
 
